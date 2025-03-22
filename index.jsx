@@ -1,5 +1,5 @@
-const lat = 41.16961335920826;
-const lon = 71.46583165711743;
+const lat = 0; // lattitude
+const lon = 0; // longitude
 
 export const command = `
   curl -s "https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=355227495210c83dcc4f7cb00e980869"
