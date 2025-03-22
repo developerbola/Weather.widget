@@ -97,12 +97,13 @@ export const render = ({ output }) => {
     <div
       style={{
         position: "absolute",
-        top: "820px",
-        left: "285px",
+        top: "829px",
+        left: "255px",
         background: background,
+        WebkitBackdropFilter: "blur(15px)",
         borderRadius: "20px",
         width: "150px",
-        height: 74,
+        height: 70,
         color: "#fff",
         fontFamily: "'Arial', sans-serif",
         textAlign: "center",
@@ -153,8 +154,12 @@ export const render = ({ output }) => {
         <p
           style={{
             fontSize: "25px",
-            fontWeight: "bold",
+            fontWeight: "500",
+            fontFamily: "Avenir Next",
+            lineHeight: "-1",
+            letterSpacing: -1,
             margin: "0",
+            marginBottom: "-5px",
           }}
         >
           {temp}°
