@@ -1,25 +1,106 @@
-const lat = 0; // lattitude
-const lon = 0; // longitude
+const lat = 41.16961335920826;
+const lon = 71.46583165711743;
 
 export const command = `
   curl -s "https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=355227495210c83dcc4f7cb00e980869"
 `;
 
-export const refreshFrequency = 60 * 1000;
+export const refreshFrequency = 2 * 60 * 1000;
 
-export const render = ({ output }) => {
+export const render = ({ output, error }) => {
+  // Properly handle loading state - if there's an error or no output
+  if (error || !output) {
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: "829px",
+          left: "245px",
+          background: "#ffffff10",
+          WebkitBackdropFilter: "blur(15px)",
+          borderRadius: "20px",
+          width: "150px",
+          height: 70,
+          color: "#fff",
+          fontFamily: "'Arial', sans-serif",
+          textAlign: "center",
+          display: "flex",
+        }}
+      >
+        <div className="loading-container">
+          <div className="spinner">
+            <div className="spinner-circle"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   let temp = "0"; // Default temperature
   let weatherInfo = "weather"; // Default weather information
   let weatherDescription = "weather"; // Default weather description
 
   try {
-    if (output) {
-      const weather = JSON.parse(output);
+    const weather = JSON.parse(output);
+    // Only set these values if weather data is valid
+    if (weather && weather.main && weather.weather && weather.weather.length > 0) {
       temp = (weather.main.temp - 273.15).toFixed(1);
       weatherInfo = weather.weather[0].main;
       weatherDescription = weather.weather[0].description;
+    } else {
+      // If we have output but invalid data, show loading
+      return (
+        <div
+          style={{
+            position: "absolute",
+            top: "829px",
+            left: "245px",
+            background: "linear-gradient(to bottom right, #1e3c7290, #2a529890)",
+            WebkitBackdropFilter: "blur(15px)",
+            borderRadius: "20px",
+            width: "150px",
+            height: 70,
+            color: "#fff",
+            fontFamily: "'Arial', sans-serif",
+            textAlign: "center",
+            display: "flex",
+          }}
+        >
+          <div className="loading-container">
+            <div className="spinner">
+              <div className="spinner-circle"></div>
+            </div>
+          </div>
+        </div>
+      );
     }
-  } catch (error) {}
+  } catch (error) {
+    // If we can't parse the output, show loading
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: "829px",
+          left: "245px",
+          background: "#ff000010",
+          WebkitBackdropFilter: "blur(15px)",
+          borderRadius: "20px",
+          width: "150px",
+          height: 70,
+          color: "#fff",
+          fontFamily: "'Arial', sans-serif",
+          textAlign: "center",
+          display: "flex",
+        }}
+      >
+        <div className="loading-container">
+          <div className="spinner">
+            <div className="spinner-circle"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const getBackgroundAndIcon = (weatherType, weatherDescription) => {
     switch (weatherType) {
@@ -29,6 +110,13 @@ export const render = ({ output }) => {
             background:
               "linear-gradient(to bottom right,rgba(42, 42, 42, 0.56),rgba(129, 134, 143, 0.56))",
             icon: "Weather.widget/icons/broken_cloud.svg",
+          };
+        }
+        if (new Date().getHours() > 18) {
+          return {
+            background:
+              "linear-gradient(to bottom right,rgba(86, 86, 86, 0.56),rgba(129, 134, 143, 0.56))",
+            icon: "Weather.widget/icons/cloudly_moon.svg",
           };
         }
         return {
@@ -98,7 +186,7 @@ export const render = ({ output }) => {
       style={{
         position: "absolute",
         top: "829px",
-        left: "255px",
+        left: "245px",
         background: background,
         WebkitBackdropFilter: "blur(15px)",
         borderRadius: "20px",
@@ -125,18 +213,6 @@ export const render = ({ output }) => {
           style={{
             height: 65,
             width: 65,
-          }}
-          id="weatherInfoImage"
-        />
-        <img
-          src={icon}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            height: 73,
-            width: 73,
-            WebkitFilter: "blur(15px)",
           }}
           id="weatherInfoImage"
         />
@@ -178,3 +254,33 @@ export const render = ({ output }) => {
     </div>
   );
 };
+
+export const className = `
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  gap: 8px;
+}
+.spinner {
+  width: 24px;
+  height: 24px;
+  position: relative;
+}
+.spinner-circle {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  border: 2px solid transparent;
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+`
